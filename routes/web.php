@@ -1,0 +1,10 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CompanyController;
+
+// Map root URL to the CompanyController index
+Route::get('/', [CompanyController::class, 'index'])->name('companies.index');
+
+// Resource routes, excluding 'index' since it's already mapped to root
+Route::resource('companies', CompanyController::class)->except(['index']);
