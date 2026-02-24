@@ -6,7 +6,14 @@
             <h2 class="mb-0">Companies</h2>
             <p class="text-muted mb-0">Manage your company locations</p>
         </div>
-        <div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-success" href="{{ route('companies.import') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up me-1" viewBox="0 0 16 16">
+                  <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 8.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"/>
+                  <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+                </svg>
+                Import Excel
+            </a>
             <a class="btn btn-primary" href="{{ route('companies.create') }}">
                 + New Company
             </a>
@@ -15,6 +22,13 @@
    
     @if ($message = Session::get('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ $message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ $message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>

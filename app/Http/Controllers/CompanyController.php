@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Services\MapyCzGeocodingService;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\CompaniesImport;
 
 class CompanyController extends Controller
 {
@@ -123,5 +125,37 @@ class CompanyController extends Controller
 
         return redirect()->route('companies.index')
             ->with('success', 'Company deleted successfully');
+    }
+
+    /**
+     * Show the import form.
+     */
+    public function import()
+    {
+        return view('companies.import');
+    }
+
+    /**
+     * Process the imported Excel file.
+     */
+    public function processImport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            $import = new CompaniesImport($this->geocodingService);
+            Excel::import($import, $request->file('file'));
+
+            $results = $import->getResults();
+
+            return redirect()->route('companies.index')
+                ->with('success', "Import completed! {$results['success']} companies imported successfully." . 
+                    ($results['skipped'] > 0 ? " {$results['skipped']} rows skipped due to errors." : ""));
+        } catch (\Exception $e) {
+            return redirect()->route('companies.index')
+                ->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 }
