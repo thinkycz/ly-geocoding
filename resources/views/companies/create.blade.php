@@ -42,7 +42,18 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-bold">Color</label>
-                    <input type="color" name="color" class="form-control form-control-color" value="#563d7c" title="Choose your color">
+                    <select name="color" class="form-select">
+                        <option value="#dc3545" style="color: #dc3545;">Red</option>
+                        <option value="#0d6efd" style="color: #0d6efd;">Blue</option>
+                        <option value="#198754" style="color: #198754;">Green</option>
+                        <option value="#ffc107" style="color: #ffc107;">Yellow</option>
+                        <option value="#6f42c1" style="color: #6f42c1;">Purple</option>
+                        <option value="#d63384" style="color: #d63384;">Pink</option>
+                        <option value="#fd7e14" style="color: #fd7e14;">Orange</option>
+                        <option value="#0dcaf0" style="color: #0dcaf0;">Cyan</option>
+                        <option value="#212529" style="color: #212529;">Dark</option>
+                        <option value="#6c757d" style="color: #6c757d;">Gray</option>
+                    </select>
                 </div>
                 
                 <div class="col-12 mt-3">

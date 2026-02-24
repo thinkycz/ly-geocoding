@@ -43,7 +43,18 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-bold">Color</label>
-                    <input type="color" name="color" class="form-control form-control-color" value="{{ $company->color ?? '#563d7c' }}" title="Choose your color">
+                    <select name="color" class="form-select">
+                        <option value="#dc3545" {{ ($company->color ?? '') == '#dc3545' ? 'selected' : '' }} style="color: #dc3545;">Red</option>
+                        <option value="#0d6efd" {{ ($company->color ?? '') == '#0d6efd' ? 'selected' : '' }} style="color: #0d6efd;">Blue</option>
+                        <option value="#198754" {{ ($company->color ?? '') == '#198754' ? 'selected' : '' }} style="color: #198754;">Green</option>
+                        <option value="#ffc107" {{ ($company->color ?? '') == '#ffc107' ? 'selected' : '' }} style="color: #ffc107;">Yellow</option>
+                        <option value="#6f42c1" {{ ($company->color ?? '') == '#6f42c1' ? 'selected' : '' }} style="color: #6f42c1;">Purple</option>
+                        <option value="#d63384" {{ ($company->color ?? '') == '#d63384' ? 'selected' : '' }} style="color: #d63384;">Pink</option>
+                        <option value="#fd7e14" {{ ($company->color ?? '') == '#fd7e14' ? 'selected' : '' }} style="color: #fd7e14;">Orange</option>
+                        <option value="#0dcaf0" {{ ($company->color ?? '') == '#0dcaf0' ? 'selected' : '' }} style="color: #0dcaf0;">Cyan</option>
+                        <option value="#212529" {{ ($company->color ?? '') == '#212529' ? 'selected' : '' }} style="color: #212529;">Dark</option>
+                        <option value="#6c757d" {{ ($company->color ?? '') == '#6c757d' ? 'selected' : '' }} style="color: #6c757d;">Gray</option>
+                    </select>
                 </div>
                 
                 <div class="col-12 mt-3 mb-2">
