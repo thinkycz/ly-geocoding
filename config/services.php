@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'mapy_cz' => [
+        'api_key' => env('MAPY_CZ_API_KEY'),
+    ],
+
 ];
