@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CompaniesExport;
 use App\Models\Company;
 use App\Services\MapyCzGeocodingService;
 use Illuminate\Http\Request;
@@ -157,5 +158,10 @@ class CompanyController extends Controller
             return redirect()->route('companies.index')
                 ->with('error', 'Import failed: ' . $e->getMessage());
         }
+    }
+
+    public function export()
+    {
+        return Excel::download(new CompaniesExport(), 'companies.xlsx');
     }
 }

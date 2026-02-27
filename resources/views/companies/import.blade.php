@@ -51,7 +51,7 @@
                                 <tr>
                                     <td><code>company_id</code></td>
                                     <td><span class="badge bg-danger">Yes</span></td>
-                                    <td>Unique company identifier</td>
+                                    <td>Unique company identifier (existing rows will be updated)</td>
                                 </tr>
                                 <tr>
                                     <td><code>street</code></td>
@@ -62,6 +62,16 @@
                                     <td><code>city</code></td>
                                     <td><span class="badge bg-danger">Yes</span></td>
                                     <td>City name</td>
+                                </tr>
+                                <tr>
+                                    <td><code>latitude</code></td>
+                                    <td><span class="badge bg-secondary">No</span></td>
+                                    <td>Latitude (e.g., 50.0870). If omitted, computed from address</td>
+                                </tr>
+                                <tr>
+                                    <td><code>longitude</code></td>
+                                    <td><span class="badge bg-secondary">No</span></td>
+                                    <td>Longitude (e.g., 14.4210). If omitted, computed from address</td>
                                 </tr>
                                 <tr>
                                     <td><code>color</code></td>
@@ -80,7 +90,7 @@
                           <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
                         </svg>
                         <div>
-                            Latitude and Longitude will be automatically computed based on the address for each company.
+                            If <code>latitude</code> and <code>longitude</code> are provided, they will be used. Otherwise they will be computed from the address.
                         </div>
                     </div>
                 </div>
@@ -101,4 +111,3 @@
     </div>
 </div>
 @endsection
-
