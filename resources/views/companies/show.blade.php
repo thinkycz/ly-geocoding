@@ -62,18 +62,75 @@
     </div>
     
     <div class="col-md-4">
-        <!-- We could add a mini map here in the future -->
-        <div class="card shadow-sm bg-light h-100 border-0">
-            <div class="card-body d-flex align-items-center justify-content-center text-center p-5">
-                <div class="text-muted">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-building mb-3 opacity-50" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.64V4.5a.5.5 0 0 1 .276-.447l8-4a.5.5 0 0 1 .487.022zM6 8.694 1 10.36V15h5V8.694zM7 15h2v-1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V15h2V1.309l-7 3.5V15z"/>
-                      <path d="M2 11h1v1H2v-1zm2 0h1v1H4v-1zm-2 2h1v1H2v-1zm2 0h1v1H4v-1zm4-4h1v1H8V9zm2 0h1v1h-1V9zm-2 2h1v1H8v-1zm2 0h1v1h-1v-1zm2-2h1v1h-1V9zm0 2h1v1h-1v-1zM8 7h1v1H8V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM8 5h1v1H8V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zm0-2h1v1h-1V3z"/>
-                    </svg>
-                    <p class="mb-0">Company Information</p>
-                </div>
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Location</h5>
+
+                <div id="company-map" style="height: 420px; width: 100%; border-radius: 0.75rem; overflow: hidden;"></div>
+
+                @if(!($company->latitude && $company->longitude))
+                    <div class="alert alert-light border mt-3 mb-0" role="alert">
+                        Coordinates are not set for this company.
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const company = @json($company);
+
+        const hasCoordinates = company.latitude && company.longitude;
+        const center = hasCoordinates ? [parseFloat(company.longitude), parseFloat(company.latitude)] : [14.42, 50.08];
+
+        const map = new maplibregl.Map({
+            container: 'company-map',
+            style: {
+                "version": 8,
+                "sources": {
+                    "mapy-cz": {
+                        "type": "raster",
+                        "tiles": [
+                            "https://api.mapy.cz/v1/maptiles/basic/256/{z}/{x}/{y}?apikey={{ config('services.mapy_cz.api_key', env('MAPY_CZ_API_KEY')) }}"
+                        ],
+                        "tileSize": 256,
+                        "attribution": '<a href="https://mapy.cz/" target="_blank">&copy; Seznam.cz, a.s.</a>'
+                    }
+                },
+                "layers": [
+                    {
+                        "id": "mapy-cz-tiles",
+                        "type": "raster",
+                        "source": "mapy-cz",
+                        "minzoom": 0,
+                        "maxzoom": 19
+                    }
+                ]
+            },
+            center,
+            zoom: hasCoordinates ? 14 : 6
+        });
+
+        map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+        if (hasCoordinates) {
+            const popup = new maplibregl.Popup({ offset: 25 })
+                .setHTML(`
+                    <div style="text-align:center;">
+                        <b>${company.title}</b><br>
+                        ${company.street}, ${company.city}
+                    </div>
+                `);
+
+            new maplibregl.Marker({ color: company.color || '#3FB1CE' })
+                .setLngLat(center)
+                .setPopup(popup)
+                .addTo(map);
+        }
+    });
+</script>
 @endsection

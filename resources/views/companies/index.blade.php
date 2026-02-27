@@ -84,12 +84,27 @@
                                 @endif
                             </td>
                             <td class="text-end pe-4">
-                                <form action="{{ route('companies.destroy',$company->id) }}" method="POST" class="d-inline">
-                                    <a class="btn btn-sm btn-outline-secondary me-1" href="{{ route('companies.show',$company->id) }}">View</a>
-                                    <a class="btn btn-sm btn-outline-primary me-1" href="{{ route('companies.edit',$company->id) }}">Edit</a>
+                                <form action="{{ route('companies.destroy',$company->id) }}" method="POST" class="d-inline-flex gap-1 flex-nowrap align-items-center">
+                                    <a class="btn btn-sm btn-outline-secondary p-1 lh-1" href="{{ route('companies.show',$company->id) }}" aria-label="View" title="View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z"/>
+                                            <path d="M8 5.5A2.5 2.5 0 1 0 8 10a2.5 2.5 0 0 0 0-5z"/>
+                                        </svg>
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-primary p-1 lh-1" href="{{ route('companies.edit',$company->id) }}" aria-label="Edit" title="Edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168z"/>
+                                            <path d="M11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207z"/>
+                                        </svg>
+                                    </a>
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger p-1 lh-1" onclick="return confirm('Are you sure?')" aria-label="Delete" title="Delete">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0A.5.5 0 0 1 8.5 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3h11V2h-11z"/>
+                                        </svg>
+                                    </button>
                                 </form>
                             </td>
                         </tr>
