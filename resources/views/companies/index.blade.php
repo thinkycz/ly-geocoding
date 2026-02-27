@@ -1,29 +1,41 @@
 @extends('layout')
  
 @section('content')
+    @php($adminUnlocked = \App\Support\AdminUnlock::isUnlocked())
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-0">Companies</h2>
             <p class="text-muted mb-0">Manage your company locations</p>
         </div>
         <div class="d-flex gap-2">
-            <a class="btn btn-outline-success" href="{{ route('companies.import') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up me-1" viewBox="0 0 16 16">
-                  <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 8.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"/>
-                  <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
-                </svg>
-                Import Excel
-            </a>
-            <a class="btn btn-outline-secondary" href="{{ route('companies.export') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down me-1" viewBox="0 0 16 16">
-                    <path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z"/>
-                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
-                </svg>
-                Export Excel
-            </a>
-            <a class="btn btn-primary" href="{{ route('companies.create') }}">
-                + New Company
-            </a>
+            @if($adminUnlocked)
+                <span class="badge text-bg-success align-self-center">Admin unlocked</span>
+                <a class="btn btn-outline-success" href="{{ route('companies.import') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up me-1" viewBox="0 0 16 16">
+                      <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 8.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"/>
+                      <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+                    </svg>
+                    Import Excel
+                </a>
+                <a class="btn btn-outline-secondary" href="{{ route('companies.export') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down me-1" viewBox="0 0 16 16">
+                        <path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z"/>
+                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+                    </svg>
+                    Export Excel
+                </a>
+                <a class="btn btn-primary" href="{{ route('companies.create') }}">
+                    + New Company
+                </a>
+                <form action="{{ route('admin.lock') }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-danger">Lock</button>
+                </form>
+            @else
+                <span class="badge text-bg-secondary align-self-center">View only</span>
+                <a class="btn btn-primary" href="{{ route('admin.unlock') }}">Unlock Admin</a>
+            @endif
         </div>
     </div>
    
@@ -38,6 +50,20 @@
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ $message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(!$adminUnlocked)
+        <div class="alert alert-light border d-flex align-items-center mb-4" role="alert">
+            <div class="me-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-shield-lock" viewBox="0 0 16 16">
+                    <path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.531 0-1.552.223-2.662.524z"/>
+                    <path d="M8 5a1 1 0 0 1 1 1v1h.5A1.5 1.5 0 0 1 11 8.5v2A1.5 1.5 0 0 1 9.5 12h-3A1.5 1.5 0 0 1 5 10.5v-2A1.5 1.5 0 0 1 6.5 7H7V6a1 1 0 0 1 1-1zm-1 2h2V6a1 1 0 0 0-2 0v1z"/>
+                </svg>
+            </div>
+            <div>
+                Admin actions are locked. You can view data, but import/export and edits require unlocking.
+            </div>
         </div>
     @endif
    
@@ -84,6 +110,7 @@
                                 @endif
                             </td>
                             <td class="text-end pe-4">
+                                @if($adminUnlocked)
                                 <form action="{{ route('companies.destroy',$company->id) }}" method="POST" class="d-inline-flex gap-1 flex-nowrap align-items-center">
                                     <a class="btn btn-sm btn-outline-secondary p-1 lh-1" href="{{ route('companies.show',$company->id) }}" aria-label="View" title="View">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
@@ -106,6 +133,14 @@
                                         </svg>
                                     </button>
                                 </form>
+                                @else
+                                    <a class="btn btn-sm btn-outline-secondary p-1 lh-1" href="{{ route('companies.show',$company->id) }}" aria-label="View" title="View">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z"/>
+                                            <path d="M8 5.5A2.5 2.5 0 1 0 8 10a2.5 2.5 0 0 0 0-5z"/>
+                                        </svg>
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

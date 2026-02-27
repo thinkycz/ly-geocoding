@@ -1,9 +1,21 @@
 @extends('layout')
   
 @section('content')
+@php($adminUnlocked = \App\Support\AdminUnlock::isUnlocked())
+
 <div class="page-header">
     <h2 class="mb-0">Company Details</h2>
-    <a class="btn btn-outline-secondary" href="{{ route('companies.index') }}"> Back</a>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="{{ route('companies.index') }}"> Back</a>
+        @if($adminUnlocked)
+            <form action="{{ route('admin.lock') }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-outline-danger">Lock</button>
+            </form>
+        @else
+            <a class="btn btn-primary" href="{{ route('admin.unlock') }}">Unlock Admin</a>
+        @endif
+    </div>
 </div>
    
 <div class="row">
@@ -50,14 +62,16 @@
                     <div class="col-sm-8 font-monospace">{{ $company->longitude ?? 'N/A' }}</div>
                 </div>
             </div>
-            <div class="card-footer bg-light border-top-0 text-end">
-                <form action="{{ route('companies.destroy',$company->id) }}" method="POST" class="d-inline">
-                    <a class="btn btn-primary me-2" href="{{ route('companies.edit',$company->id) }}">Edit Company</a>
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">Delete Company</button>
-                </form>
-            </div>
+            @if($adminUnlocked)
+                <div class="card-footer bg-light border-top-0 text-end">
+                    <form action="{{ route('companies.destroy',$company->id) }}" method="POST" class="d-inline">
+                        <a class="btn btn-primary me-2" href="{{ route('companies.edit',$company->id) }}">Edit Company</a>
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">Delete Company</button>
+                    </form>
+                </div>
+            @endif
         </div>
     </div>
     
