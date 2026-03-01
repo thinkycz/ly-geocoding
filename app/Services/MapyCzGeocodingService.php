@@ -12,7 +12,7 @@ class MapyCzGeocodingService
 
     public function __construct()
     {
-        $this->apiKey = env('MAPY_CZ_API_KEY', '');
+        $this->apiKey = config('services.mapy_cz.api_key', '');
     }
 
     /**
@@ -39,7 +39,7 @@ class MapyCzGeocodingService
 
             if ($response->successful()) {
                 $data = $response->json();
-                
+
                 // Log the response for debugging if needed
                 // Log::info('Mapy.cz Geocoding Response:', $data);
 
