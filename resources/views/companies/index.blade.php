@@ -1,16 +1,25 @@
 @extends('layout')
  
 @section('content')
-    @php($adminUnlocked = \App\Support\AdminUnlock::isUnlocked())
+    @php
+        $sortableHeaders = [
+            'id' => 'ID',
+            'title' => 'Title',
+            'company_id' => 'Company ID',
+            'color' => 'Color',
+        ];
+    @endphp
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-0">Companies</h2>
-            <p class="text-muted mb-0">Manage your company locations</p>
+            <p class="text-muted mb-0">
+                {{ $adminUnlocked ? 'Manage your company locations' : 'Unlock access to view company locations' }}
+            </p>
         </div>
         <div class="d-flex gap-2">
             @if($adminUnlocked)
-                <span class="badge text-bg-success align-self-center">Admin unlocked</span>
+                <span class="badge text-bg-success align-self-center">Access unlocked</span>
                 <a class="btn btn-outline-success" href="{{ route('companies.import') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up me-1" viewBox="0 0 16 16">
                       <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 8.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"/>
@@ -33,8 +42,8 @@
                     <button type="submit" class="btn btn-outline-danger">Lock</button>
                 </form>
             @else
-                <span class="badge text-bg-secondary align-self-center">View only</span>
-                <a class="btn btn-primary" href="{{ route('admin.unlock') }}">Unlock Admin</a>
+                <span class="badge text-bg-secondary align-self-center">Password required</span>
+                <a class="btn btn-primary" href="{{ route('admin.unlock') }}">Unlock Access</a>
             @endif
         </div>
     </div>
@@ -62,7 +71,7 @@
                 </svg>
             </div>
             <div>
-                Admin actions are locked. You can view data, but import/export and edits require unlocking.
+                Enter the password to access the company table, map details, and individual company pages.
             </div>
         </div>
     @endif
@@ -70,89 +79,104 @@
     <!-- Map Container -->
     <div id="map"></div>
 
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="ps-4">ID</th>
-                            <th>Title</th>
-                            <th>Company ID</th>
-                            <th>Color</th>
-                            <th>Address</th>
-                            <th>Coordinates</th>
-                            <th class="text-end pe-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($companies as $company)
-                        <tr>
-                            <td class="ps-4">{{ $company->id }}</td>
-                            <td class="fw-medium">{{ $company->title }}</td>
-                            <td><span class="badge bg-light text-dark border">{{ $company->company_id }}</span></td>
-                            <td>
-                                @if($company->color)
-                                    <div style="width: 24px; height: 24px; background-color: {{ $company->color }}; border-radius: 4px; border: 1px solid #ddd;" title="{{ $company->color }}"></div>
-                                @else
-                                    <span class="text-muted small">Default</span>
-                                @endif
-                            </td>
-                            <td>
-                                <div>{{ $company->street }}</div>
-                                <div class="small text-muted">{{ $company->city }}</div>
-                            </td>
-                            <td>
-                                @if($company->latitude && $company->longitude)
-                                    <small class="text-muted font-monospace">{{ number_format($company->latitude, 4) }}, {{ number_format($company->longitude, 4) }}</small>
-                                @else
-                                    <span class="text-muted small">Not set</span>
-                                @endif
-                            </td>
-                            <td class="text-end pe-4">
-                                @if($adminUnlocked)
-                                <form action="{{ route('companies.destroy',$company->id) }}" method="POST" class="d-inline-flex gap-1 flex-nowrap align-items-center">
-                                    <a class="btn btn-sm btn-outline-secondary p-1 lh-1" href="{{ route('companies.show',$company->id) }}" aria-label="View" title="View">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z"/>
-                                            <path d="M8 5.5A2.5 2.5 0 1 0 8 10a2.5 2.5 0 0 0 0-5z"/>
-                                        </svg>
-                                    </a>
-                                    <a class="btn btn-sm btn-outline-primary p-1 lh-1" href="{{ route('companies.edit',$company->id) }}" aria-label="Edit" title="Edit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168z"/>
-                                            <path d="M11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207z"/>
-                                        </svg>
-                                    </a>
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger p-1 lh-1" onclick="return confirm('Are you sure?')" aria-label="Delete" title="Delete">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0A.5.5 0 0 1 8.5 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3h11V2h-11z"/>
-                                        </svg>
-                                    </button>
-                                </form>
-                                @else
-                                    <a class="btn btn-sm btn-outline-secondary p-1 lh-1" href="{{ route('companies.show',$company->id) }}" aria-label="View" title="View">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z"/>
-                                            <path d="M8 5.5A2.5 2.5 0 1 0 8 10a2.5 2.5 0 0 0 0-5z"/>
-                                        </svg>
-                                    </a>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+    @if($adminUnlocked)
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                @foreach ($sortableHeaders as $column => $label)
+                                    @php
+                                        $isActiveSort = $sortColumn === $column;
+                                        $nextDirection = $isActiveSort && $sortDirection === 'asc' ? 'desc' : 'asc';
+                                        $sortIndicator = $isActiveSort ? ($sortDirection === 'asc' ? '↑' : '↓') : '';
+                                    @endphp
+                                    <th @class(['ps-4' => $column === 'id'])>
+                                        <a
+                                            class="text-decoration-none text-reset d-inline-flex align-items-center gap-1"
+                                            href="{{ route('companies.index', ['sort' => $column, 'direction' => $nextDirection]) }}"
+                                        >
+                                            <span>{{ $label }}</span>
+                                            <span class="small">{{ $sortIndicator }}</span>
+                                        </a>
+                                    </th>
+                                @endforeach
+                                <th>Address</th>
+                                <th>Coordinates</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($companies as $company)
+                            <tr>
+                                <td class="ps-4">{{ $company->id }}</td>
+                                <td class="fw-medium">{{ $company->title }}</td>
+                                <td><span class="badge bg-light text-dark border">{{ $company->company_id }}</span></td>
+                                <td>
+                                    @if($company->color)
+                                        <div style="width: 24px; height: 24px; background-color: {{ $company->color }}; border-radius: 4px; border: 1px solid #ddd;" title="{{ $company->color }}"></div>
+                                    @else
+                                        <span class="text-muted small">Default</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div>{{ $company->street }}</div>
+                                    <div class="small text-muted">{{ $company->city }}</div>
+                                </td>
+                                <td>
+                                    @if($company->latitude && $company->longitude)
+                                        <small class="text-muted font-monospace">{{ number_format($company->latitude, 4) }}, {{ number_format($company->longitude, 4) }}</small>
+                                    @else
+                                        <span class="text-muted small">Not set</span>
+                                    @endif
+                                </td>
+                                <td class="text-end pe-4">
+                                    <form action="{{ route('companies.destroy',$company->id) }}" method="POST" class="d-inline-flex gap-1 flex-nowrap align-items-center">
+                                        <a class="btn btn-sm btn-outline-secondary p-1 lh-1" href="{{ route('companies.show',$company->id) }}" aria-label="View" title="View">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z"/>
+                                                <path d="M8 5.5A2.5 2.5 0 1 0 8 10a2.5 2.5 0 0 0 0-5z"/>
+                                            </svg>
+                                        </a>
+                                        <a class="btn btn-sm btn-outline-primary p-1 lh-1" href="{{ route('companies.edit',$company->id) }}" aria-label="Edit" title="Edit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168z"/>
+                                                <path d="M11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207z"/>
+                                            </svg>
+                                        </a>
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger p-1 lh-1" onclick="return confirm('Are you sure?')" aria-label="Delete" title="Delete">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0A.5.5 0 0 1 8.5 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3h11V2h-11z"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    
-    @if($companies->isEmpty())
-        <div class="text-center py-5 text-muted">
-            <p>No companies found. Create one to get started.</p>
+        
+        @if($companies->isEmpty())
+            <div class="text-center py-5 text-muted">
+                <p>No companies found. Create one to get started.</p>
+            </div>
+        @endif
+    @else
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <h3 class="h5 mb-3">Company data is locked</h3>
+                <p class="text-muted mb-4">
+                    Enter the password to reveal the table, map details, and company detail pages.
+                </p>
+                <a class="btn btn-primary" href="{{ route('admin.unlock') }}">Enter Password</a>
+            </div>
         </div>
     @endif
   
@@ -193,33 +217,33 @@
         // Add Navigation Control
         map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-        // Company Data
-        const companies = @json($companies);
+        const mapMarkers = @json($mapMarkers);
 
         // Add Markers
         const bounds = new maplibregl.LngLatBounds();
         let hasCoordinates = false;
 
-        companies.forEach(company => {
-            if (company.latitude && company.longitude) {
-                // Use default MapLibre marker (blue pin)
-                // Create Popup
+        mapMarkers.forEach(marker => {
+            if (marker.latitude && marker.longitude) {
+                const mapMarker = new maplibregl.Marker({ color: marker.color || '#3FB1CE' })
+                    .setLngLat([parseFloat(marker.longitude), parseFloat(marker.latitude)]);
+
+                @if($adminUnlocked)
                 const popup = new maplibregl.Popup({ offset: 25 })
                     .setHTML(`
                         <div style="text-align:center;">
-                            <b>${company.title}</b><br>
-                            ${company.street}, ${company.city}<br>
-                            <a href="/companies/${company.id}">View Details</a>
+                            <b>${marker.title}</b><br>
+                            ${marker.street}, ${marker.city}<br>
+                            <a href="/companies/${marker.id}">View Details</a>
                         </div>
                     `);
 
-                // Add Marker to Map
-                new maplibregl.Marker({ color: company.color || '#3FB1CE' })
-                    .setLngLat([parseFloat(company.longitude), parseFloat(company.latitude)])
-                    .setPopup(popup)
-                    .addTo(map);
-                
-                bounds.extend([parseFloat(company.longitude), parseFloat(company.latitude)]);
+                mapMarker.setPopup(popup);
+                @endif
+
+                mapMarker.addTo(map);
+
+                bounds.extend([parseFloat(marker.longitude), parseFloat(marker.latitude)]);
                 hasCoordinates = true;
             }
         });

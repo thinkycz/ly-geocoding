@@ -13,7 +13,7 @@
                 <button type="submit" class="btn btn-outline-danger">Lock</button>
             </form>
         @else
-            <a class="btn btn-primary" href="{{ route('admin.unlock') }}">Unlock Admin</a>
+            <a class="btn btn-primary" href="{{ route('admin.unlock') }}">Unlock Access</a>
         @endif
     </div>
 </div>

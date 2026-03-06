@@ -15,6 +15,5 @@ Route::middleware('admin.unlocked')->group(function () {
     Route::post('/companies/import', [CompanyController::class, 'processImport'])->name('companies.import.process');
     Route::get('/companies/export', [CompanyController::class, 'export'])->name('companies.export');
     Route::resource('companies', CompanyController::class)->except(['index', 'show']);
+    Route::get('/companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
 });
-
-Route::get('/companies/{company}', [CompanyController::class, 'show'])->name('companies.show');

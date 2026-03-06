@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="page-header">
-    <h2 class="mb-0">Admin Unlock</h2>
+    <h2 class="mb-0">Unlock Access</h2>
     <a class="btn btn-outline-secondary" href="{{ route('companies.index') }}"> Back</a>
 </div>
 
@@ -20,7 +20,7 @@
 
 <div class="card shadow-sm">
     <div class="card-body">
-        <p class="text-muted mb-4">Enter the admin password to enable import, export, create, update, and delete actions.</p>
+        <p class="text-muted mb-4">Enter the password to view the company table and detail pages, and to enable import, export, create, update, and delete actions.</p>
 
         <form action="{{ route('admin.unlock.store') }}" method="POST">
             @csrf
@@ -31,7 +31,7 @@
             </div>
 
             <div class="text-end">
-                <button type="submit" class="btn btn-primary px-4">Unlock</button>
+                <button type="submit" class="btn btn-primary px-4">Enter Password</button>
             </div>
         </form>
     </div>

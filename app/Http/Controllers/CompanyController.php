@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\CompaniesExport;
 use App\Models\Company;
 use App\Services\MapyCzGeocodingService;
+use App\Support\AdminUnlock;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\CompaniesImport;
@@ -21,10 +22,31 @@ class CompanyController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $companies = Company::all();
-        return view('companies.index', compact('companies'));
+        $adminUnlocked = AdminUnlock::isUnlocked();
+        $sortableColumns = [
+            'id' => 'id',
+            'title' => 'title',
+            'company_id' => 'company_id',
+            'color' => 'color',
+        ];
+        $sort = $request->string('sort')->toString();
+        $direction = $request->string('direction')->toString();
+        $sortColumn = $sortableColumns[$sort] ?? 'id';
+        $sortDirection = $direction === 'desc' ? 'desc' : 'asc';
+
+        $companies = $adminUnlocked
+            ? Company::query()->orderBy($sortColumn, $sortDirection)->get()
+            : collect();
+        $mapMarkers = $adminUnlocked
+            ? $companies
+            : Company::query()
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->get(['latitude', 'longitude', 'color']);
+
+        return view('companies.index', compact('adminUnlocked', 'companies', 'mapMarkers', 'sortColumn', 'sortDirection'));
     }
 
     /**
